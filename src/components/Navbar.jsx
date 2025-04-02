@@ -1,4 +1,5 @@
 import appLogo from "../assets/logo.png";
+import ButtonNavbar from "./ButtonNavbar";
 
 const Navbar = () => {
   return (
@@ -12,6 +13,10 @@ const Navbar = () => {
           />
           <span className="fw-bold">DentApp</span>
         </a>
+        <div className="d-flex">
+          <ButtonNavbar title="Appointments" to="/appointments" />
+          <ButtonNavbar title="Clinics" to="/clinics" />
+        </div>
       </div>
     </nav>
   );
