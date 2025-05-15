@@ -42,10 +42,8 @@ const AuthenticationPage = () => {
     }
   };
 
-  // restul componentului rămâne la fel...
-
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
+    <div className="container d-flex justify-content-center align-items-center" style={{ minHeight: "100vh", paddingTop: "80px" }}>
       <div
         className="card p-4 shadow"
         style={{ width: "100%", maxWidth: "400px" }}
