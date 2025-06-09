@@ -1,5 +1,6 @@
 import { useState } from "react";
 import authService from "../service/AuthService";
+import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 
 const AuthenticationPage = () => {
   const [isLogin, setIsLogin] = useState(false);
@@ -42,77 +43,76 @@ const AuthenticationPage = () => {
     }
   };
 
-  // restul componentului rămâne la fel...
-
   return (
-    <div className="d-flex justify-content-center align-items-center vh-100 bg-light">
-      <div
-        className="card p-4 shadow"
-        style={{ width: "100%", maxWidth: "400px" }}
-      >
-        <h3 className="text-center mb-3">{isLogin ? "Login" : "Register"}</h3>
-        <form onSubmit={handleSubmit}>
-          {!isLogin && (
-            <>
-              <div className="mb-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="First Name"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  required
-                />
+    <Container className="d-flex justify-content-center align-items-center vh-100 bg-light">
+      <Row className="w-100 justify-content-center">
+        <Col xs={12} md={6} lg={4}>
+          <Card className="p-4 shadow">
+            <Card.Body>
+              <Card.Title className="text-center mb-3">
+                {isLogin ? "Login" : "Register"}
+              </Card.Title>
+              <Form onSubmit={handleSubmit}>
+                {!isLogin && (
+                  <>
+                    <Form.Group className="mb-2" controlId="firstName">
+                      <Form.Control
+                        type="text"
+                        placeholder="First Name"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-2" controlId="lastName">
+                      <Form.Control
+                        type="text"
+                        placeholder="Last Name"
+                        name="lastName"
+                        value={formData.lastName}
+                        onChange={handleChange}
+                        required
+                      />
+                    </Form.Group>
+                  </>
+                )}
+                <Form.Group className="mb-2" controlId="email">
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3" controlId="password">
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
+                </Form.Group>
+                <Button type="submit" variant="primary" className="w-100">
+                  {isLogin ? "Login" : "Register"}
+                </Button>
+              </Form>
+              <div className="text-center mt-3">
+                <Button variant="link" onClick={() => setIsLogin(!isLogin)}>
+                  {isLogin
+                    ? "Don't have an account? Register"
+                    : "Already have an account? Login"}
+                </Button>
               </div>
-              <div className="mb-2">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Last Name"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-            </>
-          )}
-          <div className="mb-2">
-            <input
-              type="email"
-              className="form-control"
-              placeholder="Email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <input
-              type="password"
-              className="form-control"
-              placeholder="Password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-primary w-100">
-            {isLogin ? "Login" : "Register"}
-          </button>
-        </form>
-        <div className="text-center mt-3">
-          <button className="btn btn-link" onClick={() => setIsLogin(!isLogin)}>
-            {isLogin
-              ? "Don't have an account? Register"
-              : "Already have an account? Login"}
-          </button>
-        </div>
-      </div>
-    </div>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 

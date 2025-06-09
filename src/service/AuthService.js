@@ -17,10 +17,11 @@ const login = async ({ email, password }) => {
     email,
     password,
   });
-
-  const { token, role } = response.data;
+  console.log(response.data);
+  const { token, role, clientId } = response.data;
   localStorage.setItem("token", token);
   localStorage.setItem("role", role);
+  localStorage.setItem("clientId", clientId);
 
   return response.data;
 };
