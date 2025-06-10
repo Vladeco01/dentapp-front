@@ -31,6 +31,8 @@ const logout = () => {
   localStorage.removeItem("role");
 };
 
+const isLoggedIn = () => Boolean(localStorage.getItem("token"));
+
 const getCurrentUserRole = () => {
   return localStorage.getItem("role");
 };
@@ -45,4 +47,5 @@ export default {
   logout,
   getCurrentUserRole,
   getToken,
+  isLoggedIn,
 };

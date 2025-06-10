@@ -1,0 +1,38 @@
+.clinicContainer {
+  width: 100%;
+  padding: 2rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.clinicItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  background-color: #f7f7f7;
+  min-height: 80px;
+  transition: box-shadow 0.2s ease;
+}
+
+.clinicItem:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.clinicDetails {
+  display: flex;
+  flex-direction: column;
+}
+
+.clinicDetails span {
+  margin: 0.25rem 0;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #343a40;
+}
+
+.cancelButton {
+  flex-shrink: 0;
+}

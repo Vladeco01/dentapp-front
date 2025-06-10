@@ -1,19 +1,64 @@
-import { Routes, Route, Router } from "react-router-dom";
-import AuthenticationPage from "./components/AuthenticationPage";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+} from "react-router-dom";
+
+import { AuthProvider } from "./components/authentication/AuthContext";
+import PublicRoute from "./components/routes/PublicRoute";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import AuthenticationPage from "./components/authentication/AuthenticationPage";
 import Header from "./header/Header";
-function App() {
+import AppointmentsPage from "./components/appointments/AppointmentsPage";
+import ClinicsPage from "./components/clinics/ClinicsPage";
+import NotFoundPage from "./components/notfound/NotFoundPage";
+import { AuthContext } from "./components/authentication/AuthContext";
+import { useContext } from "react";
+
+function InnerApp() {
+  const location = useLocation();
+  const isAuthPage = location.pathname === "/authenticate";
+  const { isAuthenticated } = useContext(AuthContext);
   return (
-    <Router>
-      <Header />
+    <>
+      {!isAuthPage && <Header />}
       <div className="container mt-5">
         <Routes>
-          <Route path="/authenticate" element={<AuthenticationPage />} />
-          <Route path="/appointments" element={<div>Appointments Page</div>} />
-          <Route path="/clinics" element={<div>Clinics Page</div>} />
+          <Route element={<PublicRoute />}>
+            <Route path="/authenticate" element={<AuthenticationPage />} />
+          </Route>
+
+          <Route element={<ProtectedRoute />}>
+            <Route path="/appointments" element={<AppointmentsPage />} />
+            <Route path="/clinics" element={<ClinicsPage />} />
+          </Route>
+
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to={isAuthenticated ? "/appointments" : "/authenticate"}
+                replace
+              />
+            }
+          />
+
+          <Route path="*" element={<NotFoundPage />} />
         </Routes>
       </div>
-    </Router>
+    </>
   );
 }
 
+function App() {
+  return (
+    <AuthProvider>
+      <Router>
+        <InnerApp />
+      </Router>
+    </AuthProvider>
+  );
+}
 export default App;
