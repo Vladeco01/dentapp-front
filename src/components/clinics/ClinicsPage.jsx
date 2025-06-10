@@ -30,17 +30,16 @@ const ClinicsPage = () => {
 
   return (
     <Container className={styles.clinicContainer}>
-      <h2 className="mb-4">Programările mele</h2>
+      <h2 className="mb-4">Clinici</h2>
       <ListGroup as="ul">
         {clinics.map((cns) => (
           <ListGroup.Item as="li" key={cns.id} className={styles.clinicItem}>
             <div className={styles.clinicDetails}>
               <span>
-                <strong>Nume: </strong> {new Date(cns.name).toLocaleString()}
+                <strong>Nume: </strong> {cns.name}
               </span>
               <span>
-                <strong> Strada: </strong>{" "}
-                {new Date(cns.address).toLocaleString()}
+                <strong> Strada: </strong> {cns.address}
               </span>
             </div>
           </ListGroup.Item>
