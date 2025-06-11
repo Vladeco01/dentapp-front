@@ -36,3 +36,23 @@
 .cancelButton {
   flex-shrink: 0;
 }
+
+.dentistList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.dentistCard {
+  background-color: #e9ecef;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  text-align: center;
+  min-width: 100px;
+}
+
+.dentistCard:hover {
+  background-color: #dde1e4;
+}
