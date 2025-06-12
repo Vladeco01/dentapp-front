@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, ListGroup, Modal, Button, Form } from "react-bootstrap";
 import styles from "./ClinicsPage.module.css";
+import FavoriteService from "../../service/FavoriteService";
 
 const ClinicsPage = () => {
   const [clinics, setClinics] = useState([]);
@@ -11,7 +12,8 @@ const ClinicsPage = () => {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [description, setDescription] = useState("");
-  //   const clientId = parseInt(localStorage.getItem("clientId"));
+  const [favoriteIds, setFavoriteIds] = useState([]);
+  const clientId = parseInt(localStorage.getItem("clientId"));
 
   useEffect(() => {
     getClinics();
@@ -76,6 +78,21 @@ const ClinicsPage = () => {
     await fetchDentistSlots(dent.id);
   };
 
+  const handleToggleFavorite = async (e, dentistId) => {
+    e.stopPropagation();
+    try {
+      if (favoriteIds.includes(dentistId)) {
+        await FavoriteService.removeFavorite(clientId, dentistId);
+        setFavoriteIds(favoriteIds.filter((id) => id !== dentistId));
+      } else {
+        await FavoriteService.addFavorite(clientId, dentistId);
+        setFavoriteIds([...favoriteIds, dentistId]);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleCreateAppointment = async () => {
     if (!selectedDentist || !selectedSlot || !description) return;
 
@@ -129,12 +146,16 @@ const ClinicsPage = () => {
             {dentistsByClinic[cns.id] && (
               <div className={styles.dentistList}>
                 {dentistsByClinic[cns.id].map((dent) => (
-                  <div
-                    key={dent.id}
-                    className={styles.dentistCard}
-                    onClick={() => handleDentistClick(dent)}
-                  >
-                    {dent.firstName} {dent.lastName}
+                  <div key={dent.id} className={styles.dentistCard}>
+                    <span onClick={() => handleDentistClick(dent)}>
+                      {dent.firstName} {dent.lastName}
+                    </span>
+                    <span
+                      className={styles.favoriteIcon}
+                      onClick={(e) => handleToggleFavorite(e, dent.id)}
+                    >
+                      {favoriteIds.includes(dent.id) ? "♥" : "♡"}
+                    </span>
                   </div>
                 ))}
               </div>

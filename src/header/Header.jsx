@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { Container, Navbar, Nav, NavDropdown } from "react-bootstrap";
+import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import appLogo from "../assets/logo.png";
 import { AuthContext } from "../components/authentication/AuthContext";
@@ -40,7 +40,15 @@ const Header = () => {
           </Nav>
 
           {isAuthenticated && (
-            <Nav className="ms-auto">
+           <Nav className="ms-auto align-items-center">
+              <Button
+                variant="outline-light"
+                size="sm"
+                className="me-2"
+                onClick={() => navigate("/favorites")}
+              >
+                ❤
+              </Button>
               <NavDropdown
                 title={`Hello, ${firstName || "User"}`}
                 id="user-nav-dropdown"

@@ -1,0 +1,14 @@
+.favoritesContainer {
+  width: 100%;
+  padding: 2rem;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.favoriteItem {
+  margin-bottom: 1rem;
+  background-color: #f7f7f7;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem;
+}

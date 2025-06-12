@@ -16,6 +16,7 @@ import ClinicsPage from "./components/clinics/ClinicsPage";
 import NotFoundPage from "./components/notfound/NotFoundPage";
 import { AuthContext } from "./components/authentication/AuthContext";
 import { useContext } from "react";
+import FavoritePage from "./components/favorites/FavoritePage";
 
 function InnerApp() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function InnerApp() {
           <Route element={<ProtectedRoute />}>
             <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/clinics" element={<ClinicsPage />} />
+            <Route path="/favorites" element={<FavoritePage />} />
           </Route>
 
           <Route

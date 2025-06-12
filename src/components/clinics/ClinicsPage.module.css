@@ -49,10 +49,17 @@
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
   cursor: pointer;
-  text-align: center;
-  min-width: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 120px;
 }
 
 .dentistCard:hover {
   background-color: #dde1e4;
+}
+
+.favoriteIcon {
+  margin-left: 0.5rem;
+  cursor: pointer;
 }
