@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AuthService from "../../service/AuthService";
+import styles from "./AuthenticationPage.module.css";
 import { Container, Row, Col, Form, Button, Card } from "react-bootstrap";
 
 const AuthenticationPage = () => {
@@ -46,7 +47,7 @@ const AuthenticationPage = () => {
   return (
     <Container
       fluid
-      className="vh-100 d-flex align-items-center justify-content-center"
+      className={`${styles.authContainer} vh-100 d-flex align-items-center justify-content-center`}
     >
       <Row className="w-100">
         <Col xs={12} sm={8} md={6} lg={4} className="mx-auto">

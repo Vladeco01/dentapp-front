@@ -3,6 +3,7 @@ import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import appLogo from "../assets/logo.png";
 import { AuthContext } from "../components/authentication/AuthContext";
+import styles from "./Header.module.css";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -22,11 +23,7 @@ const Header = () => {
     <Navbar bg="primary" data-bs-theme="dark" expand="lg">
       <Container>
         <Navbar.Brand as={Link} to="/">
-          <img
-            src={appLogo}
-            alt="DentApp"
-            style={{ height: "40px", marginRight: 10 }}
-          />
+          <img src={appLogo} alt="DentApp" className={styles.logo} />
           <span className="fw-bold">DentApp</span>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="main-navbar-nav" />

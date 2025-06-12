@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Form, Button, Alert } from "react-bootstrap";
 import UserService from "../../service/UserService";
+import styles from "./ProfilePage.module.css";
 
 const ProfilePage = () => {
   const [formData, setFormData] = useState({
@@ -53,7 +54,7 @@ const ProfilePage = () => {
   };
 
   return (
-    <Container style={{ maxWidth: 500 }}>
+    <Container className={styles.profileContainer}>
       <h2 className="mb-4">Profile</h2>
       {message && <Alert variant="info">{message}</Alert>}
       <Form onSubmit={handleSubmit}>

@@ -1,5 +1,6 @@
 import { Container, Row, Col, Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import styles from "./NotFoundPage.module.css";
 
 const NotFoundPage = () => {
   const navigate = useNavigate();
@@ -7,7 +8,7 @@ const NotFoundPage = () => {
   return (
     <Container
       fluid
-      className="vh-100 d-flex align-items-center justify-content-center bg-light"
+      className={`${styles.notFoundContainer} vh-100 d-flex align-items-center justify-content-center bg-light`}
     >
       <Row>
         <Col className="text-center">
