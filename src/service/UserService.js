@@ -4,7 +4,7 @@ const API_BASE_URL = "http://localhost:8080/users";
 const ROLE_CHANGE_URL = "http://localhost:8080/api/role-change-requests";
 
 const getProfile = async (userId) => {
-  const response = await axios.get(`${API_BASE_URL}/${userId}`, {
+  const response = await axios.get(`${API_BASE_URL}/getUser/${userId}`, {
     headers: { Authorization: localStorage.getItem("token") },
   });
   return response.data;

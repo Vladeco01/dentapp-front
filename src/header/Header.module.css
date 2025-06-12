@@ -2,3 +2,12 @@
   height: 40px;
   margin-right: 10px;
 }
+
+.notificationDropdown :global(.dropdown-menu) {
+  min-width: 20rem;
+  font-size: 1.1rem;
+}
+
+.notificationToggle {
+  font-size: 1.1rem;
+}

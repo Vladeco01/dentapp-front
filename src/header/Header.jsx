@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
+import {
+  Container,
+  Navbar,
+  Nav,
+  NavDropdown,
+  Button,
+  Badge,
+} from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import appLogo from "../assets/logo.png";
 import { AuthContext } from "../components/authentication/AuthContext";
@@ -37,16 +44,16 @@ const Header = () => {
     navigate("/profile");
   };
 
-  const unreadCount = notifications.filter((n) => !n.read).length;
+  const unreadNotifications = notifications.filter((n) => !n.read);
+  const unreadCount = unreadNotifications.length;
 
   const handleNotificationsToggle = async (isOpen) => {
     if (isOpen) {
-      const unread = notifications.filter((n) => !n.read);
       try {
         await Promise.all(
-          unread.map((n) => NotificationService.markAsRead(n.id))
+          unreadNotifications.map((n) => NotificationService.markAsRead(n.id))
         );
-        if (unread.length > 0) {
+        if (unreadNotifications.length > 0) {
           setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
         }
       } catch (err) {
@@ -88,15 +95,25 @@ const Header = () => {
                 </Button>
               )}
               <NavDropdown
-                title={`Notifications${unreadCount ? ` (${unreadCount})` : ""}`}
+                title={
+                  <span className={styles.notificationToggle}>
+                    Notifications
+                    {unreadCount > 0 && (
+                      <Badge bg="danger" pill className="ms-1">
+                        {unreadCount}
+                      </Badge>
+                    )}
+                  </span>
+                }
                 id="notifications-nav-dropdown"
                 align="end"
                 onToggle={handleNotificationsToggle}
+                className={styles.notificationDropdown}
               >
-                {notifications.length === 0 ? (
+                {unreadNotifications.length === 0 ? (
                   <NavDropdown.ItemText>No notifications</NavDropdown.ItemText>
                 ) : (
-                  notifications.map((n) => (
+                  unreadNotifications.map((n) => (
                     <NavDropdown.ItemText key={n.id}>
                       {n.message}
                     </NavDropdown.ItemText>

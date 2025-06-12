@@ -15,7 +15,7 @@ import AppointmentsPage from "./components/appointments/AppointmentsPage";
 import ClinicsPage from "./components/clinics/ClinicsPage";
 import NotFoundPage from "./components/notfound/NotFoundPage";
 import { AuthContext } from "./components/authentication/AuthContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import FavoritePage from "./components/favorites/FavoritePage";
 import ProfilePage from "./components/profile/ProfilePage";
 
@@ -23,6 +23,15 @@ function InnerApp() {
   const location = useLocation();
   const isAuthPage = location.pathname === "/authenticate";
   const { isAuthenticated } = useContext(AuthContext);
+
+  useEffect(() => {
+    if (isAuthPage) {
+      document.body.classList.add("auth-page");
+    } else {
+      document.body.classList.remove("auth-page");
+    }
+  }, [isAuthPage]);
+
   return (
     <>
       {!isAuthPage && <Header />}
