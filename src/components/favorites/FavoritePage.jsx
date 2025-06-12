@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Container, ListGroup } from "react-bootstrap";
+import { Container, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import axios from "axios";
 import FavoriteService from "../../service/FavoriteService";
 import styles from "./FavoritePage.module.css";
 import ClinicService from "../../service/ClinicService";
@@ -8,6 +9,11 @@ const FavoritePage = () => {
   const [favorites, setFavorites] = useState([]);
   const clientId = parseInt(localStorage.getItem("clientId"));
   const [clinicMap, setClinicMap] = useState({});
+  const [showModal, setShowModal] = useState(false);
+  const [selectedDentist, setSelectedDentist] = useState(null);
+  const [slots, setSlots] = useState([]);
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [description, setDescription] = useState("");
 
   useEffect(() => {
     fetchFavorites();
@@ -31,24 +37,139 @@ const FavoritePage = () => {
       console.error(err);
     }
   };
-  
+
+  const fetchDentistSlots = async (dentistId) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:8080/api/appointments/free/${dentistId}`,
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+          },
+        }
+      );
+      setSlots(res.data);
+    } catch (err) {
+      console.error(err);
+      setSlots([]);
+    }
+  };
+
+  const handleOpenModal = async (dentist) => {
+    setSelectedDentist(dentist);
+    setSelectedSlot("");
+    setDescription("");
+    setShowModal(true);
+    await fetchDentistSlots(dentist.id);
+  };
+
+  const handleCreateAppointment = async () => {
+    if (!selectedDentist || !selectedSlot || !description) return;
+
+    const clientId = parseInt(localStorage.getItem("clientId"));
+    const [datePart, timePart] = selectedSlot.split("T");
+    const [hourStr, minuteStr] = timePart.split(":");
+    const hour = Number(hourStr);
+
+    const startTime = `${datePart}T${hourStr.padStart(2, "0")}:${minuteStr}:00`;
+
+    const nextHour = String(hour + 1).padStart(2, "0");
+    const endTime = `${datePart}T${nextHour}:${minuteStr}:00`;
+
+    try {
+      await axios.post(
+        "http://localhost:8080/api/appointments/createAppointment",
+        {
+          description,
+          clientId,
+          dentistId: selectedDentist.id,
+          startTime,
+          endTime,
+        },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setShowModal(false);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Container className={styles.favoritesContainer}>
       <h2 className="mb-4">Favorite</h2>
       <ListGroup as="ul">
         {favorites.map((fav) => (
-          <ListGroup.Item
-            as="li"
-            key={fav.id}
-            className={styles.favoriteItem}
-          >
-            <h4>{fav.firstName} {fav.lastName}</h4>
+          <ListGroup.Item as="li" key={fav.id} className={styles.favoriteItem}>
+            <h4>
+              {fav.firstName} {fav.lastName}
+            </h4>
             <span>Email: {fav.email}</span>
             <br></br>
             <span>{clinicMap[fav.id] && clinicMap[fav.id]}</span>
+            <div className="mt-2">
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={() => handleOpenModal(fav)}
+              >
+                Programează
+              </Button>
+            </div>
           </ListGroup.Item>
         ))}
       </ListGroup>
+      <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>
+            {selectedDentist &&
+              `${selectedDentist.firstName} ${selectedDentist.lastName}`}
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {slots.length === 0 ? (
+            <p>Nu există intervale disponibile.</p>
+          ) : (
+            <Form.Select
+              className="mb-3"
+              value={selectedSlot}
+              onChange={(e) => setSelectedSlot(e.target.value)}
+            >
+              <option value="">Selectează ora</option>
+              {slots.map((s) => (
+                <option key={s} value={s}>
+                  {new Date(s).toLocaleString()}
+                </option>
+              ))}
+            </Form.Select>
+          )}
+          <Form.Select
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          >
+            <option value="">Tip programare</option>
+            <option value="Consultație de rutină">Consultație de rutină</option>
+            <option value="Albire dentară">Albire dentară</option>
+            <option value="Tratare carie">Tratare carie</option>
+          </Form.Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Închide
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleCreateAppointment}
+            disabled={!selectedSlot || !description}
+          >
+            Programează
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
