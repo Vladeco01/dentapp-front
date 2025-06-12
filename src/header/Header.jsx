@@ -1,14 +1,32 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container, Navbar, Nav, NavDropdown, Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import appLogo from "../assets/logo.png";
 import { AuthContext } from "../components/authentication/AuthContext";
 import styles from "./Header.module.css";
+import NotificationService from "../service/NotificationService";
 
 const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, firstName, logout } = useContext(AuthContext);
+  const [notifications, setNotifications] = useState([]);
+  const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchNotifications();
+    }
+  }, [isAuthenticated]);
+
+  const fetchNotifications = async () => {
+    try {
+      const data = await NotificationService.getForUser(userId);
+      setNotifications(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const handleSignOut = () => {
     logout();
@@ -17,6 +35,24 @@ const Header = () => {
 
   const goToProfile = () => {
     navigate("/profile");
+  };
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const handleNotificationsToggle = async (isOpen) => {
+    if (isOpen) {
+      const unread = notifications.filter((n) => !n.read);
+      try {
+        await Promise.all(
+          unread.map((n) => NotificationService.markAsRead(n.id))
+        );
+        if (unread.length > 0) {
+          setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (
@@ -51,6 +87,22 @@ const Header = () => {
                   ❤
                 </Button>
               )}
+              <NavDropdown
+                title={`Notifications${unreadCount ? ` (${unreadCount})` : ""}`}
+                id="notifications-nav-dropdown"
+                align="end"
+                onToggle={handleNotificationsToggle}
+              >
+                {notifications.length === 0 ? (
+                  <NavDropdown.ItemText>No notifications</NavDropdown.ItemText>
+                ) : (
+                  notifications.map((n) => (
+                    <NavDropdown.ItemText key={n.id}>
+                      {n.message}
+                    </NavDropdown.ItemText>
+                  ))
+                )}
+              </NavDropdown>
               <NavDropdown
                 title={`Hello, ${firstName || "User"}`}
                 id="user-nav-dropdown"

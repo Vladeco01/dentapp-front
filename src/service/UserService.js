@@ -11,17 +11,21 @@ const getProfile = async (userId) => {
 };
 
 const updateProfile = async (userId, data) => {
-  const response = await axios.put(`${API_BASE_URL}/${userId}`, data, {
-    headers: {
-      Authorization: localStorage.getItem("token"),
-      "Content-Type": "application/json",
-    },
-  });
+  const response = await axios.put(
+    `${API_BASE_URL}/update-user/${userId}`,
+    data,
+    {
+      headers: {
+        Authorization: localStorage.getItem("token"),
+        "Content-Type": "application/json",
+      },
+    }
+  );
   return response.data;
 };
 
 const requestDentistRole = async (userId) => {
-  const response = await axios.post(ROLE_CHANGE_URL, userId, {
+  const response = await axios.post(`${ROLE_CHANGE_URL}/${userId}`, userId, {
     headers: {
       Authorization: localStorage.getItem("token"),
       "Content-Type": "application/json",
