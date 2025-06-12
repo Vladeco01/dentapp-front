@@ -30,7 +30,6 @@ const ClinicsPage = () => {
         }
       );
       setClinics(response.data);
-      console.log(response.data);
       response.data.forEach((c) => fetchDentists(c.id));
     } catch (error) {
       console.error(error);
