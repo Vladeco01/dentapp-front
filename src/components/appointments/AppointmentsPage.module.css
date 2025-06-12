@@ -36,3 +36,8 @@
 .cancelButton {
   flex-shrink: 0;
 }
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+}
