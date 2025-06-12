@@ -17,6 +17,7 @@ import NotFoundPage from "./components/notfound/NotFoundPage";
 import { AuthContext } from "./components/authentication/AuthContext";
 import { useContext } from "react";
 import FavoritePage from "./components/favorites/FavoritePage";
+import ProfilePage from "./components/profile/ProfilePage";
 
 function InnerApp() {
   const location = useLocation();
@@ -35,6 +36,7 @@ function InnerApp() {
             <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/clinics" element={<ClinicsPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
 
           <Route

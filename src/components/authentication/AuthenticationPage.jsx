@@ -29,7 +29,7 @@ const AuthenticationPage = () => {
         if (role === "ADMIN") {
           window.location.href = "/admin";
         } else if (role === "DENTIST") {
-          window.location.href = "/dashboard";
+          window.location.href = "/appointments";
         } else {
           window.location.href = "/clinics";
         }

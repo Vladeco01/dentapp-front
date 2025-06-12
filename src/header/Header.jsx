@@ -7,6 +7,7 @@ import { AuthContext } from "../components/authentication/AuthContext";
 const Header = () => {
   const navigate = useNavigate();
   const { isAuthenticated, firstName, logout } = useContext(AuthContext);
+  const role = localStorage.getItem("role");
 
   const handleSignOut = () => {
     logout();
@@ -31,24 +32,28 @@ const Header = () => {
         <Navbar.Toggle aria-controls="main-navbar-nav" />
         <Navbar.Collapse id="main-navbar-nav">
           <Nav className="me-auto">
-            <Nav.Link as={Link} to="/clinics">
-              Clinici
-            </Nav.Link>
+            {role !== "DENTIST" && (
+              <Nav.Link as={Link} to="/clinics">
+                Clinici
+              </Nav.Link>
+            )}
             <Nav.Link as={Link} to="/appointments">
               Programări
             </Nav.Link>
           </Nav>
 
           {isAuthenticated && (
-           <Nav className="ms-auto align-items-center">
-              <Button
-                variant="outline-light"
-                size="sm"
-                className="me-2"
-                onClick={() => navigate("/favorites")}
-              >
-                ❤
-              </Button>
+            <Nav className="ms-auto align-items-center">
+              {role !== "DENTIST" && (
+                <Button
+                  variant="outline-light"
+                  size="sm"
+                  className="me-2"
+                  onClick={() => navigate("/favorites")}
+                >
+                  ❤
+                </Button>
+              )}
               <NavDropdown
                 title={`Hello, ${firstName || "User"}`}
                 id="user-nav-dropdown"
