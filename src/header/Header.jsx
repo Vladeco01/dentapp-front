@@ -105,34 +105,36 @@ const Header = ({ minimal = false }) => {
                     ❤
                   </Button>
                 )}
-                <NavDropdown
-                  title={
-                    <span className={styles.notificationToggle}>
-                      Notifications
-                      {unreadCount > 0 && (
-                        <Badge bg="danger" pill className="ms-1">
-                          {unreadCount}
-                        </Badge>
-                      )}
-                    </span>
-                  }
-                  id="notifications-nav-dropdown"
-                  align="end"
-                  onToggle={handleNotificationsToggle}
-                  className={styles.notificationDropdown}
-                >
-                  {unreadNotifications.length === 0 ? (
-                    <NavDropdown.ItemText>
-                      No notifications
-                    </NavDropdown.ItemText>
-                  ) : (
-                    unreadNotifications.map((n) => (
-                      <NavDropdown.ItemText key={n.id}>
-                        {n.message}
+                {role !== "ADMIN" && (
+                  <NavDropdown
+                    title={
+                      <span className={styles.notificationToggle}>
+                        Notifications
+                        {unreadCount > 0 && (
+                          <Badge bg="danger" pill className="ms-1">
+                            {unreadCount}
+                          </Badge>
+                        )}
+                      </span>
+                    }
+                    id="notifications-nav-dropdown"
+                    align="end"
+                    onToggle={handleNotificationsToggle}
+                    className={styles.notificationDropdown}
+                  >
+                    {unreadNotifications.length === 0 ? (
+                      <NavDropdown.ItemText>
+                        No notifications
                       </NavDropdown.ItemText>
-                    ))
-                  )}
-                </NavDropdown>
+                    ) : (
+                      unreadNotifications.map((n) => (
+                        <NavDropdown.ItemText key={n.id}>
+                          {n.message}
+                        </NavDropdown.ItemText>
+                      ))
+                    )}
+                  </NavDropdown>
+                )}
                 <NavDropdown
                   title={`Hello, ${firstName || "User"}`}
                   id="user-nav-dropdown"

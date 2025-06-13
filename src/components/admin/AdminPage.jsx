@@ -53,6 +53,7 @@ const AdminPage = () => {
         "http://localhost:8080/api/appointments/getAll",
         authHeader
       );
+      console.log(res.data);
       setAppointments(res.data);
     } catch (err) {
       console.error(err);

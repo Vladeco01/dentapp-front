@@ -6,7 +6,6 @@ const getForUser = async (userId) => {
   const response = await axios.get(`${API_BASE_URL}?userId=${userId}`, {
     headers: { Authorization: localStorage.getItem("token") },
   });
-  console.log(response.data);
   return response.data;
 };
 
