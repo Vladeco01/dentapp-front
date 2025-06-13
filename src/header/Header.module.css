@@ -6,6 +6,12 @@
 .notificationDropdown :global(.dropdown-menu) {
   min-width: 20rem;
   font-size: 1.1rem;
+  background-color: #ffffff;
+  color: #212529;
+}
+
+.notificationDropdown :global(.dropdown-item-text) {
+  color: #212529;
 }
 
 .notificationToggle {

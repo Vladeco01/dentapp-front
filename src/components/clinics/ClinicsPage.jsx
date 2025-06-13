@@ -54,15 +54,23 @@ const ClinicsPage = () => {
 
   const fetchDentistSlots = async (dentistId) => {
     try {
-      const res = await axios.get(
-        `http://localhost:8080/api/appointments/free/${dentistId}`,
-        {
-          headers: {
-            Authorization: localStorage.getItem("token"),
-          },
-        }
+      const [slotsRes, apptRes] = await Promise.all([
+        axios.get(`http://localhost:8080/api/appointments/free/${dentistId}`, {
+          headers: { Authorization: localStorage.getItem("token") },
+        }),
+        axios.get(
+          `http://localhost:8080/api/appointments/dentist/${dentistId}`,
+          {
+            headers: { Authorization: localStorage.getItem("token") },
+          }
+        ),
+      ]);
+      const taken = new Set(
+        apptRes.data
+          .filter((a) => ["ACCEPTED", "WAITING"].includes(a.status))
+          .map((a) => a.startTime.slice(0, 16))
       );
-      setSlots(res.data);
+      setSlots(slotsRes.data.filter((s) => !taken.has(s)));
     } catch (err) {
       console.error(err);
       setSlots([]);
@@ -190,7 +198,9 @@ const ClinicsPage = () => {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
           >
-            <option value="">Tip programare</option>
+            <option value="" disabled hidden>
+              Tip programare
+            </option>
             <option value="Consultație de rutină">Consultație de rutină</option>
             <option value="Albire dentară">Albire dentară</option>
             <option value="Tratare carie">Tratare carie</option>
