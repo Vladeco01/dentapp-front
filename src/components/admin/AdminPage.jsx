@@ -53,8 +53,33 @@ const AdminPage = () => {
         "http://localhost:8080/api/appointments/getAll",
         authHeader
       );
-      console.log(res.data);
-      setAppointments(res.data);
+      const appointmentsWithNames = await Promise.all(
+        res.data.map(async (appt) => {
+          try {
+            const [clientRes, dentistRes] = await Promise.all([
+              axios.get(
+                `http://localhost:8080/users/getUser/${appt.clientId}`,
+                authHeader
+              ),
+              axios.get(
+                `http://localhost:8080/users/getUser/${appt.dentistId}`,
+                authHeader
+              ),
+            ]);
+
+            return {
+              ...appt,
+              client: clientRes.data,
+              dentist: dentistRes.data,
+            };
+          } catch (err) {
+            console.error(err);
+            return appt;
+          }
+        })
+      );
+
+      setAppointments(appointmentsWithNames);
     } catch (err) {
       console.error(err);
     }
