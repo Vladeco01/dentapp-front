@@ -65,3 +65,11 @@
   margin-left: 0.5rem;
   cursor: pointer;
 }
+
+.availableDay {
+  background-color: #57d173 !important;
+}
+
+.unavailableDay {
+  background-color: #f8d7da !important;
+}

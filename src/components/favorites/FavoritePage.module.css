@@ -14,3 +14,11 @@
   border-radius: 0.5rem;
   padding: 1rem;
 }
+
+.availableDay {
+  background-color: #d4edda !important;
+}
+
+.unavailableDay {
+  background-color: #f8d7da !important;
+}

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Form, Button, Alert, Modal } from "react-bootstrap";
 import UserService from "../../service/UserService";
+import axios from "axios";
 import styles from "./ProfilePage.module.css";
 import ClinicService from "../../service/ClinicService";
 
@@ -17,6 +18,7 @@ const ProfilePage = () => {
   const [dentists, setDentists] = useState([]);
   const [search, setSearch] = useState("");
   const [selectedDentistId, setSelectedDentistId] = useState("");
+  const [freeSlots, setFreeSlots] = useState([]);
 
   const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
@@ -48,6 +50,22 @@ const ProfilePage = () => {
       }
     };
     if (role === "DENTIST") fetchClinic();
+  }, [role, userId]);
+
+  useEffect(() => {
+    const fetchFreeSlots = async () => {
+      try {
+        const res = await axios.get(
+          `http://localhost:8080/api/appointments/free/${userId}`,
+          { headers: { Authorization: localStorage.getItem("token") } }
+        );
+        setFreeSlots(res.data);
+      } catch (err) {
+        console.error(err);
+        setFreeSlots([]);
+      }
+    };
+    if (role === "DENTIST") fetchFreeSlots();
   }, [role, userId]);
 
   const handleChange = (e) => {
@@ -94,6 +112,24 @@ const ProfilePage = () => {
       setShowAddModal(false);
       setSelectedDentistId("");
       setSearch("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleBlockSlot = async (slot) => {
+    try {
+      await axios.post(
+        "http://localhost:8080/api/appointments/block",
+        { dentistId: userId, startTime: slot },
+        {
+          headers: {
+            Authorization: localStorage.getItem("token"),
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      setFreeSlots(freeSlots.filter((s) => s !== slot));
     } catch (err) {
       console.error(err);
     }
@@ -184,6 +220,26 @@ const ProfilePage = () => {
             </Button>
           </div>
         ))}
+      {role === "DENTIST" && freeSlots.length > 0 && (
+        <div className="mt-4">
+          <h4>Ore disponibile</h4>
+          <ul className={styles.slotList}>
+            {freeSlots.map((s) => (
+              <li key={s}>
+                {new Date(s).toLocaleString()}
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="ms-2"
+                  onClick={() => handleBlockSlot(s)}
+                >
+                  Blochează
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
         <Modal.Header closeButton>
           <Modal.Title>Add Dentist</Modal.Title>

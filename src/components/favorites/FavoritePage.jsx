@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, ListGroup, Button, Modal, Form } from "react-bootstrap";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import axios from "axios";
 import FavoriteService from "../../service/FavoriteService";
 import styles from "./FavoritePage.module.css";
@@ -15,6 +17,8 @@ const FavoritePage = () => {
   const [slots, setSlots] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState("");
   const [description, setDescription] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [slotsByDate, setSlotsByDate] = useState({});
 
   useEffect(() => {
     fetchFavorites();
@@ -64,10 +68,21 @@ const FavoritePage = () => {
     }
   };
 
+  useEffect(() => {
+    const grouped = {};
+    slots.forEach((s) => {
+      const date = s.split("T")[0];
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(s);
+    });
+    setSlotsByDate(grouped);
+  }, [slots]);
+
   const handleOpenModal = async (dentist) => {
     setSelectedDentist(dentist);
     setSelectedSlot("");
     setDescription("");
+    setSelectedDate(null);
     setShowModal(true);
     await fetchDentistSlots(dentist.id);
   };
@@ -144,18 +159,43 @@ const FavoritePage = () => {
           {slots.length === 0 ? (
             <p>Nu există intervale disponibile.</p>
           ) : (
-            <Form.Select
-              className="mb-3"
-              value={selectedSlot}
-              onChange={(e) => setSelectedSlot(e.target.value)}
-            >
-              <option value="">Selectează ora</option>
-              {slots.map((s) => (
-                <option key={s} value={s}>
-                  {new Date(s).toLocaleString()}
-                </option>
-              ))}
-            </Form.Select>
+            <>
+              <Calendar
+                onChange={setSelectedDate}
+                value={selectedDate}
+                tileClassName={({ date }) => {
+                  const d = date.toISOString().slice(0, 10);
+                  return slotsByDate[d]
+                    ? styles.availableDay
+                    : styles.unavailableDay;
+                }}
+                tileDisabled={({ date }) => {
+                  const d = date.toISOString().slice(0, 10);
+                  return !slotsByDate[d];
+                }}
+              />
+              {selectedDate &&
+                (slotsByDate[selectedDate.toISOString().slice(0, 10)] || [])
+                  .length > 0 && (
+                  <Form.Select
+                    className="mt-3"
+                    value={selectedSlot}
+                    onChange={(e) => setSelectedSlot(e.target.value)}
+                  >
+                    <option value="">Selectează ora</option>
+                    {(
+                      slotsByDate[selectedDate.toISOString().slice(0, 10)] || []
+                    ).map((s) => (
+                      <option key={s} value={s}>
+                        {new Date(s).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </option>
+                    ))}
+                  </Form.Select>
+                )}
+            </>
           )}
           <Form.Select
             value={description}
