@@ -104,7 +104,21 @@ const AdminPage = () => {
         "http://localhost:8080/api/role-change-requests",
         authHeader
       );
-      setRequests(res.data);
+      const requestsWithClients = await Promise.all(
+        res.data.map(async (req) => {
+          try {
+            const userRes = await axios.get(
+              `http://localhost:8080/users/getUser/${req.clientId}`,
+              authHeader
+            );
+            return { ...req, client: userRes.data };
+          } catch (err) {
+            console.error(err);
+            return req;
+          }
+        })
+      );
+      setRequests(requestsWithClients);
     } catch (err) {
       console.error(err);
     }
@@ -170,9 +184,9 @@ const AdminPage = () => {
   const updateRequestStatus = async (id, status) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/role-change-requests/${id}?status=${status}`,
+        `http://localhost:8080/api/role-change-requests/${id}`,
         null,
-        authHeader
+        { ...authHeader, params: { status } }
       );
       fetchRequests();
       toast.success(`Request ${status.toLowerCase()}`);

@@ -1,19 +1,36 @@
-import { Container } from "react-bootstrap";
+import { Container, Button, Row, Col } from "react-bootstrap";
 import styles from "./HomePage.module.css";
 
 const HomePage = () => {
   return (
-    <Container className={styles.homeContainer}>
-      <h2 className="mb-4">Bine ați venit la DentApp</h2>
-      <p>
-        DentApp este o aplicație creată pentru a ușura procesul de programare la
-        medicul dentist. Prin intermediul ei puteți vedea clinicile disponibile,
-        vă puteți face programări și urmări istoricul acestora.
-      </p>
-      <p>
-        După autentificare, accesați secțiunile aplicației din meniul de sus
-        pentru a descoperi toate funcționalitățile oferite.
-      </p>
+    <Container fluid className={styles.homeContainer}>
+      <section className={styles.hero}>
+        <h1>Salut! Bine ai venit la DentApp</h1>
+        <p>Programări la dentist rapid și fără bătăi de cap.</p>
+        <Button variant="primary" href="/clinics" className={styles.ctaButton}>
+          Programează-te acum!
+        </Button>
+      </section>
+
+      <section className={styles.features}>
+        <Row>
+          <Col md={4} className={styles.feature}>
+            <h3>Găsești clinici</h3>
+            <p>
+              Explorează cabinete locale și alege-l pe cel care ți se
+              potrivește.
+            </p>
+          </Col>
+          <Col md={4} className={styles.feature}>
+            <h3>Verifici calendarul</h3>
+            <p>Vezi rapid intervalele disponibile.</p>
+          </Col>
+          <Col md={4} className={styles.feature}>
+            <h3>Urmărești istoricul</h3>
+            <p>Ai mereu la îndemână toate programările trecute.</p>
+          </Col>
+        </Row>
+      </section>
     </Container>
   );
 };
