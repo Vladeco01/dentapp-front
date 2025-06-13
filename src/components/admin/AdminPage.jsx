@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, Table, Button, Form } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
@@ -174,6 +175,7 @@ const AdminPage = () => {
         authHeader
       );
       fetchRequests();
+      toast.success(`Request ${status.toLowerCase()}`);
     } catch (err) {
       console.error(err);
     }

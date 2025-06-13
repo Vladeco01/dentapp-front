@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Container, ListGroup, Modal, Button, Form } from "react-bootstrap";
 import styles from "./ClinicsPage.module.css";
+import { toast } from "react-toastify";
 import FavoriteService from "../../service/FavoriteService";
 
 const ClinicsPage = () => {
@@ -131,6 +132,7 @@ const ClinicsPage = () => {
         }
       );
       setShowModal(false);
+      toast.success("Cerere de programare creata");
     } catch (err) {
       console.error(err);
     }

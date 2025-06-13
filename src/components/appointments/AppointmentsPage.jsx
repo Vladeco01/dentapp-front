@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Container, ListGroup, Button } from "react-bootstrap";
 import styles from "./AppointmentsPage.module.css";
+import { toast } from "react-toastify";
 
 const AppointmentsPage = () => {
   const [appointments, setAppointments] = useState([]);
@@ -69,6 +70,7 @@ const AppointmentsPage = () => {
         }
       );
       getAppointments();
+      toast.success("Programare anulata");
     } catch (error) {
       console.error("Eroare la anulare:", error);
     }
@@ -84,6 +86,7 @@ const AppointmentsPage = () => {
         }
       );
       getAppointments();
+      toast.success("Programare acceptata");
     } catch (error) {
       console.error("Eroare la acceptare:", error);
     }
@@ -99,6 +102,7 @@ const AppointmentsPage = () => {
         }
       );
       getAppointments();
+      toast.success("Programare respinsa");
     } catch (error) {
       console.error("Eroare la respingere:", error);
     }

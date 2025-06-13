@@ -21,6 +21,8 @@ import FavoritePage from "./components/favorites/FavoritePage";
 import ProfilePage from "./components/profile/ProfilePage";
 import AdminPage from "./components/admin/AdminPage";
 import HomePage from "./components/home/HomePage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function InnerApp() {
   const location = useLocation();
@@ -86,6 +88,7 @@ function App() {
     <AuthProvider>
       <Router>
         <InnerApp />
+        <ToastContainer position="bottom-right" />
       </Router>
     </AuthProvider>
   );

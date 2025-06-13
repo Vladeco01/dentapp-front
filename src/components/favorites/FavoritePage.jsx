@@ -4,6 +4,7 @@ import axios from "axios";
 import FavoriteService from "../../service/FavoriteService";
 import styles from "./FavoritePage.module.css";
 import ClinicService from "../../service/ClinicService";
+import { toast } from "react-toastify";
 
 const FavoritePage = () => {
   const [favorites, setFavorites] = useState([]);
@@ -102,6 +103,7 @@ const FavoritePage = () => {
         }
       );
       setShowModal(false);
+      toast.success("Cerere de programare creata");
     } catch (err) {
       console.error(err);
     }
