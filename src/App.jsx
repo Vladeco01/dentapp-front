@@ -20,6 +20,7 @@ import { useContext, useEffect } from "react";
 import FavoritePage from "./components/favorites/FavoritePage";
 import ProfilePage from "./components/profile/ProfilePage";
 import AdminPage from "./components/admin/AdminPage";
+import HomePage from "./components/home/HomePage";
 
 function InnerApp() {
   const location = useLocation();
@@ -54,6 +55,7 @@ function InnerApp() {
             <Route path="/clinics" element={<ClinicsPage />} />
             <Route path="/favorites" element={<FavoritePage />} />
             <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/home" element={<HomePage />} />
           </Route>
 
           <Route
@@ -64,7 +66,7 @@ function InnerApp() {
                   isAuthenticated
                     ? localStorage.getItem("role") === "ADMIN"
                       ? "/admin"
-                      : "/appointments"
+                      : "/home"
                     : "/authenticate"
                 }
                 replace

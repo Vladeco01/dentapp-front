@@ -29,10 +29,8 @@ const AuthenticationPage = () => {
         const role = data.role;
         if (role === "ADMIN") {
           window.location.href = "/admin";
-        } else if (role === "DENTIST") {
-          window.location.href = "/appointments";
         } else {
-          window.location.href = "/clinics";
+          window.location.href = "/home";
         }
       } else {
         const data = await authService.register(formData);
