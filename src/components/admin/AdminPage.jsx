@@ -407,7 +407,7 @@ const AdminPage = () => {
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={() => updateRequestStatus(r.id, "DENIED")}
+                    onClick={() => updateRequestStatus(r.id, "DECLINED")}
                   >
                     Decline
                   </Button>

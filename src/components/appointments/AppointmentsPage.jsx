@@ -92,7 +92,7 @@ const AppointmentsPage = () => {
   const handleDecline = async (appointmentId) => {
     try {
       await axios.put(
-        `http://localhost:8080/api/appointments/${appointmentId}/decline`,
+        `http://localhost:8080/api/appointments/${appointmentId}/deny`,
         null,
         {
           headers: { Authorization: localStorage.getItem("token") },
