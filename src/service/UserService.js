@@ -34,4 +34,16 @@ const requestDentistRole = async (userId) => {
   return response.data;
 };
 
-export default { getProfile, updateProfile, requestDentistRole };
+const getAllDentists = async () => {
+  const response = await axios.get(`${API_BASE_URL}/dentists`, {
+    headers: { Authorization: localStorage.getItem("token") },
+  });
+  return response.data;
+};
+
+export default {
+  getProfile,
+  updateProfile,
+  requestDentistRole,
+  getAllDentists,
+};

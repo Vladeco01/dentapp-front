@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Container, Form, Button, Alert } from "react-bootstrap";
+import { Container, Form, Button, Alert, Modal } from "react-bootstrap";
 import UserService from "../../service/UserService";
 import styles from "./ProfilePage.module.css";
+import ClinicService from "../../service/ClinicService";
 
 const ProfilePage = () => {
   const [formData, setFormData] = useState({
@@ -10,6 +11,12 @@ const ProfilePage = () => {
     email: "",
   });
   const [message, setMessage] = useState("");
+  const [clinic, setClinic] = useState(null);
+  const [clinicForm, setClinicForm] = useState({ name: "", address: "" });
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [dentists, setDentists] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedDentistId, setSelectedDentistId] = useState("");
 
   const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
@@ -30,6 +37,19 @@ const ProfilePage = () => {
     if (userId) fetchProfile();
   }, [userId]);
 
+  useEffect(() => {
+    const fetchClinic = async () => {
+      try {
+        const data = await ClinicService.getClinicForDentist(userId);
+        setClinic(data);
+      } catch (err) {
+        setClinic(null);
+        console.log(err);
+      }
+    };
+    if (role === "DENTIST") fetchClinic();
+  }, [role, userId]);
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -48,6 +68,42 @@ const ProfilePage = () => {
     try {
       await UserService.requestDentistRole(userId);
       setMessage("Request sent");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleClinicFormChange = (e) => {
+    setClinicForm({ ...clinicForm, [e.target.name]: e.target.value });
+  };
+
+  const handleCreateClinic = async () => {
+    try {
+      const data = await ClinicService.createClinic(userId, clinicForm);
+      setClinic(data);
+      setClinicForm({ name: "", address: "" });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleAddDentist = async () => {
+    try {
+      const idData = await ClinicService.getClinicIdForDentist(userId);
+      await ClinicService.addDentistToClinic(idData, selectedDentistId);
+      setShowAddModal(false);
+      setSelectedDentistId("");
+      setSearch("");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const openAddModal = async () => {
+    try {
+      const data = await UserService.getAllDentists();
+      setDentists(data);
+      setShowAddModal(true);
     } catch (err) {
       console.error(err);
     }
@@ -94,6 +150,81 @@ const ProfilePage = () => {
           </Button>
         )}
       </Form>
+      {role === "DENTIST" &&
+        (!clinic ? (
+          <div className="mt-4">
+            <h4>Create Clinic</h4>
+            <Form.Group className="mb-3" controlId="clinicName">
+              <Form.Label>Name</Form.Label>
+              <Form.Control
+                type="text"
+                name="name"
+                value={clinicForm.name}
+                onChange={handleClinicFormChange}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3" controlId="clinicAddress">
+              <Form.Label>Address</Form.Label>
+              <Form.Control
+                type="text"
+                name="address"
+                value={clinicForm.address}
+                onChange={handleClinicFormChange}
+              />
+            </Form.Group>
+            <Button variant="primary" onClick={handleCreateClinic}>
+              Create Clinic
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-4">
+            <h4>{clinic.name}</h4>
+            <Button variant="secondary" onClick={openAddModal}>
+              Add Dentist
+            </Button>
+          </div>
+        ))}
+      <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Add Dentist</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form.Control
+            type="text"
+            placeholder="Search by email"
+            className="mb-3"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <Form.Select
+            value={selectedDentistId}
+            onChange={(e) => setSelectedDentistId(e.target.value)}
+          >
+            <option value="">Select dentist</option>
+            {dentists
+              .filter((d) =>
+                d.email.toLowerCase().includes(search.toLowerCase())
+              )
+              .map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.email}
+                </option>
+              ))}
+          </Form.Select>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAddModal(false)}>
+            Close
+          </Button>
+          <Button
+            variant="primary"
+            onClick={handleAddDentist}
+            disabled={!selectedDentistId}
+          >
+            Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };
