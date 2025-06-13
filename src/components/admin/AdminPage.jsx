@@ -374,7 +374,7 @@ const AdminPage = () => {
                   <Button
                     variant="success"
                     size="sm"
-                    onClick={() => updateRequestStatus(r.id, "APPROVED")}
+                    onClick={() => updateRequestStatus(r.id, "ACCEPTED")}
                   >
                     Approve
                   </Button>

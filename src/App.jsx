@@ -26,6 +26,8 @@ function InnerApp() {
   const isAuthPage = location.pathname === "/authenticate";
   const { isAuthenticated } = useContext(AuthContext);
 
+  const minimalHeader = isAuthPage || !isAuthenticated;
+
   useEffect(() => {
     if (isAuthPage) {
       document.body.classList.add("auth-page");
@@ -36,7 +38,7 @@ function InnerApp() {
 
   return (
     <>
-      {!isAuthPage && <Header />}
+      <Header minimal={minimalHeader} />
       <div className="container mt-5">
         <Routes>
           <Route element={<PublicRoute />}>

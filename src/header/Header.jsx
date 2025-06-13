@@ -12,13 +12,15 @@ import appLogo from "../assets/logo.png";
 import { AuthContext } from "../components/authentication/AuthContext";
 import styles from "./Header.module.css";
 import NotificationService from "../service/NotificationService";
+import PropTypes from "prop-types";
 
-const Header = () => {
+const Header = ({ minimal = false }) => {
   const navigate = useNavigate();
   const { isAuthenticated, firstName, logout } = useContext(AuthContext);
   const [notifications, setNotifications] = useState([]);
   const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
+  const full = isAuthenticated && !minimal;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -69,84 +71,92 @@ const Header = () => {
           <img src={appLogo} alt="DentApp" className={styles.logo} />
           <span className="fw-bold">DentApp</span>
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="main-navbar-nav" />
-        <Navbar.Collapse id="main-navbar-nav">
-          <Nav className="me-auto">
-            {role === "ADMIN" ? (
-              <Nav.Link as={Link} to="/admin">
-                Admin
-              </Nav.Link>
-            ) : (
-              <>
-                {role !== "DENTIST" && (
-                  <Nav.Link as={Link} to="/clinics">
-                    Clinici
+        {full && (
+          <>
+            <Navbar.Toggle aria-controls="main-navbar-nav" />
+            <Navbar.Collapse id="main-navbar-nav">
+              <Nav className="me-auto">
+                {role === "ADMIN" ? (
+                  <Nav.Link as={Link} to="/admin">
+                    Admin
                   </Nav.Link>
-                )}
-                <Nav.Link as={Link} to="/appointments">
-                  Programări
-                </Nav.Link>
-              </>
-            )}
-          </Nav>
-
-          {isAuthenticated && (
-            <Nav className="ms-auto align-items-center">
-              {role === "CLIENT" && (
-                <Button
-                  variant="outline-light"
-                  size="sm"
-                  className="me-2"
-                  onClick={() => navigate("/favorites")}
-                >
-                  ❤
-                </Button>
-              )}
-              <NavDropdown
-                title={
-                  <span className={styles.notificationToggle}>
-                    Notifications
-                    {unreadCount > 0 && (
-                      <Badge bg="danger" pill className="ms-1">
-                        {unreadCount}
-                      </Badge>
-                    )}
-                  </span>
-                }
-                id="notifications-nav-dropdown"
-                align="end"
-                onToggle={handleNotificationsToggle}
-                className={styles.notificationDropdown}
-              >
-                {unreadNotifications.length === 0 ? (
-                  <NavDropdown.ItemText>No notifications</NavDropdown.ItemText>
                 ) : (
-                  unreadNotifications.map((n) => (
-                    <NavDropdown.ItemText key={n.id}>
-                      {n.message}
-                    </NavDropdown.ItemText>
-                  ))
+                  <>
+                    {role !== "DENTIST" && (
+                      <Nav.Link as={Link} to="/clinics">
+                        Clinici
+                      </Nav.Link>
+                    )}
+                    <Nav.Link as={Link} to="/appointments">
+                      Programări
+                    </Nav.Link>
+                  </>
                 )}
-              </NavDropdown>
-              <NavDropdown
-                title={`Hello, ${firstName || "User"}`}
-                id="user-nav-dropdown"
-                align="end"
-              >
-                <NavDropdown.Item onClick={goToProfile}>
-                  Profile
-                </NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item onClick={handleSignOut}>
-                  Sign Out
-                </NavDropdown.Item>
-              </NavDropdown>
-            </Nav>
-          )}
-        </Navbar.Collapse>
+              </Nav>
+
+              <Nav className="ms-auto align-items-center">
+                {role === "CLIENT" && (
+                  <Button
+                    variant="outline-light"
+                    size="sm"
+                    className="me-2"
+                    onClick={() => navigate("/favorites")}
+                  >
+                    ❤
+                  </Button>
+                )}
+                <NavDropdown
+                  title={
+                    <span className={styles.notificationToggle}>
+                      Notifications
+                      {unreadCount > 0 && (
+                        <Badge bg="danger" pill className="ms-1">
+                          {unreadCount}
+                        </Badge>
+                      )}
+                    </span>
+                  }
+                  id="notifications-nav-dropdown"
+                  align="end"
+                  onToggle={handleNotificationsToggle}
+                  className={styles.notificationDropdown}
+                >
+                  {unreadNotifications.length === 0 ? (
+                    <NavDropdown.ItemText>
+                      No notifications
+                    </NavDropdown.ItemText>
+                  ) : (
+                    unreadNotifications.map((n) => (
+                      <NavDropdown.ItemText key={n.id}>
+                        {n.message}
+                      </NavDropdown.ItemText>
+                    ))
+                  )}
+                </NavDropdown>
+                <NavDropdown
+                  title={`Hello, ${firstName || "User"}`}
+                  id="user-nav-dropdown"
+                  align="end"
+                >
+                  <NavDropdown.Item onClick={goToProfile}>
+                    Profile
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleSignOut}>
+                    Sign Out
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </Nav>
+            </Navbar.Collapse>
+          </>
+        )}
       </Container>
     </Navbar>
   );
 };
 
 export default Header;
+
+Header.propTypes = {
+  minimal: PropTypes.bool,
+};
