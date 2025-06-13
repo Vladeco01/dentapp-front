@@ -9,6 +9,7 @@ import {
 import { AuthProvider } from "./components/authentication/AuthContext";
 import PublicRoute from "./components/routes/PublicRoute";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
+import AdminRoute from "./components/routes/AdminRoute";
 import AuthenticationPage from "./components/authentication/AuthenticationPage";
 import Header from "./header/Header";
 import AppointmentsPage from "./components/appointments/AppointmentsPage";
@@ -18,6 +19,7 @@ import { AuthContext } from "./components/authentication/AuthContext";
 import { useContext, useEffect } from "react";
 import FavoritePage from "./components/favorites/FavoritePage";
 import ProfilePage from "./components/profile/ProfilePage";
+import AdminPage from "./components/admin/AdminPage";
 
 function InnerApp() {
   const location = useLocation();
@@ -41,6 +43,10 @@ function InnerApp() {
             <Route path="/authenticate" element={<AuthenticationPage />} />
           </Route>
 
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
+
           <Route element={<ProtectedRoute />}>
             <Route path="/appointments" element={<AppointmentsPage />} />
             <Route path="/clinics" element={<ClinicsPage />} />
@@ -52,7 +58,13 @@ function InnerApp() {
             path="/"
             element={
               <Navigate
-                to={isAuthenticated ? "/appointments" : "/authenticate"}
+                to={
+                  isAuthenticated
+                    ? localStorage.getItem("role") === "ADMIN"
+                      ? "/admin"
+                      : "/appointments"
+                    : "/authenticate"
+                }
                 replace
               />
             }

@@ -72,19 +72,27 @@ const Header = () => {
         <Navbar.Toggle aria-controls="main-navbar-nav" />
         <Navbar.Collapse id="main-navbar-nav">
           <Nav className="me-auto">
-            {role !== "DENTIST" && (
-              <Nav.Link as={Link} to="/clinics">
-                Clinici
+            {role === "ADMIN" ? (
+              <Nav.Link as={Link} to="/admin">
+                Admin
               </Nav.Link>
+            ) : (
+              <>
+                {role !== "DENTIST" && (
+                  <Nav.Link as={Link} to="/clinics">
+                    Clinici
+                  </Nav.Link>
+                )}
+                <Nav.Link as={Link} to="/appointments">
+                  Programări
+                </Nav.Link>
+              </>
             )}
-            <Nav.Link as={Link} to="/appointments">
-              Programări
-            </Nav.Link>
           </Nav>
 
           {isAuthenticated && (
             <Nav className="ms-auto align-items-center">
-              {role !== "DENTIST" && (
+              {role === "CLIENT" && (
                 <Button
                   variant="outline-light"
                   size="sm"
