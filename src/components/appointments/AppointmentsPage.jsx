@@ -16,14 +16,43 @@ const AppointmentsPage = () => {
     try {
       const url =
         role === "DENTIST"
-          ? `http://localhost:8080/api/appointments/dentist/${userId}/pending`
+          ? `http://localhost:8080/api/appointments/dentist/${userId}`
           : `http://localhost:8080/api/appointments/client/${userId}`;
       const response = await axios.get(url, {
         headers: {
           Authorization: localStorage.getItem("token"),
         },
       });
-      setAppointments(response.data);
+      let data = response.data;
+      console.log(data);
+      if (role === "DENTIST") {
+        data = await Promise.all(
+          data.map(async (appt) => {
+            if (!appt.clientName && appt.clientId) {
+              try {
+                const res = await axios.get(
+                  `http://localhost:8080/users/getUser/${appt.clientId}`,
+                  {
+                    headers: {
+                      Authorization: localStorage.getItem("token"),
+                    },
+                  }
+                );
+                return {
+                  ...appt,
+                  clientName: `${res.data.firstName} ${res.data.lastName}`,
+                };
+              } catch (e) {
+                console.error(e);
+                return appt;
+              }
+            }
+            return appt;
+          })
+        );
+      }
+
+      setAppointments(data);
     } catch (error) {
       console.error(error);
     }
@@ -77,9 +106,7 @@ const AppointmentsPage = () => {
 
   return (
     <Container className={styles.appointmentsContainer}>
-      <h2 className="mb-4">
-        {role === "DENTIST" ? "Programări în așteptare" : "Programările mele"}
-      </h2>
+      <h2 className="mb-4">Programările mele</h2>
       <ListGroup as="ul">
         {appointments.map((appt) => (
           <ListGroup.Item
@@ -112,35 +139,35 @@ const AppointmentsPage = () => {
                 <strong> Status: </strong> {appt.status}
               </span>
             </div>
-            {role === "DENTIST" ? (
-              <div className={styles.actionButtons}>
-                <Button
-                  variant="success"
-                  size="sm"
-                  onClick={() => handleAccept(appt.id)}
-                >
-                  Acceptă
-                </Button>
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  onClick={() => handleDecline(appt.id)}
-                >
-                  Respinge
-                </Button>
-              </div>
-            ) : (
-              ["ACCEPTED", "WAITING"].includes(appt.status) && (
-                <Button
-                  variant="outline-danger"
-                  size="sm"
-                  className={styles.cancelButton}
-                  onClick={() => handleCancel(appt.id)}
-                >
-                  Anulează
-                </Button>
-              )
-            )}
+            {role === "DENTIST"
+              ? appt.status === "WAITING" && (
+                  <div className={styles.actionButtons}>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      onClick={() => handleAccept(appt.id)}
+                    >
+                      Acceptă
+                    </Button>
+                    <Button
+                      variant="outline-danger"
+                      size="sm"
+                      onClick={() => handleDecline(appt.id)}
+                    >
+                      Respinge
+                    </Button>
+                  </div>
+                )
+              : ["ACCEPTED", "WAITING"].includes(appt.status) && (
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    className={styles.cancelButton}
+                    onClick={() => handleCancel(appt.id)}
+                  >
+                    Anulează
+                  </Button>
+                )}
           </ListGroup.Item>
         ))}
       </ListGroup>

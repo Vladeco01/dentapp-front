@@ -50,7 +50,7 @@ const Header = ({ minimal = false }) => {
   const unreadCount = unreadNotifications.length;
 
   const handleNotificationsToggle = async (isOpen) => {
-    if (isOpen) {
+    if (!isOpen) {
       try {
         await Promise.all(
           unreadNotifications.map((n) => NotificationService.markAsRead(n.id))
