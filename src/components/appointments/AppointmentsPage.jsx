@@ -1,11 +1,14 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { Container, ListGroup, Button } from "react-bootstrap";
+import { Container, ListGroup, Button, Form } from "react-bootstrap";
 import styles from "./AppointmentsPage.module.css";
 import { toast } from "react-toastify";
 
 const AppointmentsPage = () => {
   const [appointments, setAppointments] = useState([]);
+  const [nameFilter, setNameFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
 
@@ -109,11 +112,49 @@ const AppointmentsPage = () => {
     }
   };
 
+  const filteredAppointments = appointments.filter((appt) => {
+    const matchesName = nameFilter
+      ? [appt.dentistName, appt.clientName]
+          .filter(Boolean)
+          .some((n) => n.toLowerCase().includes(nameFilter.toLowerCase()))
+      : true;
+    const matchesDate = dateFilter
+      ? appt.startTime.slice(0, 10) === dateFilter
+      : true;
+    const matchesStatus = statusFilter ? appt.status === statusFilter : true;
+
+    return matchesName && matchesDate && matchesStatus;
+  });
+
   return (
     <Container className={styles.appointmentsContainer}>
       <h2 className="mb-4">Programările mele</h2>
+      <Form.Control
+        className="mb-3"
+        placeholder="Caută după nume"
+        value={nameFilter}
+        onChange={(e) => setNameFilter(e.target.value)}
+      />
+      <Form.Control
+        className="mb-3"
+        type="date"
+        value={dateFilter}
+        onChange={(e) => setDateFilter(e.target.value)}
+      />
+      <Form.Select
+        className="mb-3"
+        value={statusFilter}
+        onChange={(e) => setStatusFilter(e.target.value)}
+      >
+        <option value="">Toate statusurile</option>
+        {Array.from(new Set(appointments.map((a) => a.status))).map((st) => (
+          <option key={st} value={st}>
+            {st}
+          </option>
+        ))}
+      </Form.Select>
       <ListGroup as="ul">
-        {appointments.map((appt) => (
+        {filteredAppointments.map((appt) => (
           <ListGroup.Item
             as="li"
             key={appt.id}
