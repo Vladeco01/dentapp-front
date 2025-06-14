@@ -124,6 +124,16 @@ const FavoritePage = () => {
     }
   };
 
+  const handleRemoveFavorite = async (dentistId) => {
+    try {
+      await FavoriteService.removeFavorite(clientId, dentistId);
+      setFavorites(favorites.filter((f) => f.id !== dentistId));
+      toast.success("Dentistul a fost scos de la favorite");
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <Container className={styles.favoritesContainer}>
       <h2 className="mb-4">Favorite</h2>
@@ -136,13 +146,20 @@ const FavoritePage = () => {
             <span>Email: {fav.email}</span>
             <br></br>
             <span>{clinicMap[fav.id] && clinicMap[fav.id]}</span>
-            <div className="mt-2">
+            <div className={styles.actionButtons}>
               <Button
                 variant="primary"
                 size="sm"
                 onClick={() => handleOpenModal(fav)}
               >
                 Programează
+              </Button>
+              <Button
+                variant="outline-danger"
+                size="sm"
+                onClick={() => handleRemoveFavorite(fav.id)}
+              >
+                Scoate din favorite
               </Button>
             </div>
           </ListGroup.Item>

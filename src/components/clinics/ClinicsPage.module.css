@@ -10,7 +10,7 @@
 .clinicItem {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 1.5rem;
   border: none;
   border-radius: 0.5rem;
@@ -41,7 +41,8 @@
 
 .dentistList {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: flex-end;
   gap: 0.5rem;
   margin-top: 0.5rem;
 }

@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Container, Form, Button, Alert, Modal } from "react-bootstrap";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import UserService from "../../service/UserService";
 import axios from "axios";
 import styles from "./ProfilePage.module.css";
@@ -19,6 +21,10 @@ const ProfilePage = () => {
   const [search, setSearch] = useState("");
   const [selectedDentistId, setSelectedDentistId] = useState("");
   const [freeSlots, setFreeSlots] = useState([]);
+  const [showBlockModal, setShowBlockModal] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [slotsByDate, setSlotsByDate] = useState({});
 
   const userId = parseInt(localStorage.getItem("clientId"));
   const role = localStorage.getItem("role");
@@ -67,6 +73,16 @@ const ProfilePage = () => {
     };
     if (role === "DENTIST") fetchFreeSlots();
   }, [role, userId]);
+
+  useEffect(() => {
+    const grouped = {};
+    freeSlots.forEach((s) => {
+      const date = s.split("T")[0];
+      if (!grouped[date]) grouped[date] = [];
+      grouped[date].push(s);
+    });
+    setSlotsByDate(grouped);
+  }, [freeSlots]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -133,6 +149,14 @@ const ProfilePage = () => {
     } catch (err) {
       console.error(err);
     }
+  };
+
+  const handleConfirmBlock = async () => {
+    if (!selectedSlot) return;
+    await handleBlockSlot(selectedSlot);
+    setShowBlockModal(false);
+    setSelectedSlot("");
+    setSelectedDate(null);
   };
 
   const openAddModal = async () => {
@@ -223,21 +247,9 @@ const ProfilePage = () => {
       {role === "DENTIST" && freeSlots.length > 0 && (
         <div className="mt-4">
           <h4>Ore disponibile</h4>
-          <ul className={styles.slotList}>
-            {freeSlots.map((s) => (
-              <li key={s}>
-                {new Date(s).toLocaleString()}
-                <Button
-                  variant="danger"
-                  size="sm"
-                  className="ms-2"
-                  onClick={() => handleBlockSlot(s)}
-                >
-                  Blochează
-                </Button>
-              </li>
-            ))}
-          </ul>
+          <Button variant="danger" onClick={() => setShowBlockModal(true)}>
+            Blochează un interval
+          </Button>
         </div>
       )}
       <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
@@ -278,6 +290,66 @@ const ProfilePage = () => {
             disabled={!selectedDentistId}
           >
             Add
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal show={showBlockModal} onHide={() => setShowBlockModal(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Blochează interval</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {freeSlots.length === 0 ? (
+            <p>Nu există intervale disponibile.</p>
+          ) : (
+            <>
+              <Calendar
+                onChange={setSelectedDate}
+                value={selectedDate}
+                tileClassName={({ date }) => {
+                  const d = date.toISOString().slice(0, 10);
+                  return slotsByDate[d]
+                    ? styles.availableDay
+                    : styles.unavailableDay;
+                }}
+                tileDisabled={({ date }) => {
+                  const d = date.toISOString().slice(0, 10);
+                  return !slotsByDate[d];
+                }}
+              />
+              {selectedDate &&
+                (slotsByDate[selectedDate.toISOString().slice(0, 10)] || [])
+                  .length > 0 && (
+                  <Form.Select
+                    className="mt-3"
+                    value={selectedSlot}
+                    onChange={(e) => setSelectedSlot(e.target.value)}
+                  >
+                    <option value="">Selectează ora</option>
+                    {(
+                      slotsByDate[selectedDate.toISOString().slice(0, 10)] || []
+                    ).map((s) => (
+                      <option key={s} value={s}>
+                        {new Date(s).toLocaleTimeString([], {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </option>
+                    ))}
+                  </Form.Select>
+                )}
+            </>
+          )}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowBlockModal(false)}>
+            Închide
+          </Button>
+          <Button
+            variant="danger"
+            onClick={handleConfirmBlock}
+            disabled={!selectedSlot}
+          >
+            Blochează
           </Button>
         </Modal.Footer>
       </Modal>

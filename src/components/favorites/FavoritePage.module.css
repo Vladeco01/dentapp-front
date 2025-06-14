@@ -22,3 +22,8 @@
 .unavailableDay {
   background-color: #f8d7da !important;
 }
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+}
