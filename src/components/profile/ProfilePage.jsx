@@ -305,6 +305,10 @@ const ProfilePage = () => {
               <Calendar
                 onChange={setSelectedDate}
                 value={selectedDate}
+                prevLabel="‹"
+                nextLabel="›"
+                prev2Label="«"
+                next2Label="»"
                 tileClassName={({ date }) => {
                   const d = date.toISOString().slice(0, 10);
                   return slotsByDate[d]

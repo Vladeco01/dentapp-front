@@ -22,7 +22,17 @@ const ClinicsPage = () => {
 
   useEffect(() => {
     getClinics();
+    fetchFavorites();
   }, []);
+
+  const fetchFavorites = async () => {
+    try {
+      const data = await FavoriteService.getFavorites(clientId);
+      setFavoriteIds(data.map((d) => d.id));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   const getClinics = async () => {
     try {
@@ -202,6 +212,10 @@ const ClinicsPage = () => {
               <Calendar
                 onChange={setSelectedDate}
                 value={selectedDate}
+                prevLabel="‹"
+                nextLabel="›"
+                prev2Label="«"
+                next2Label="»"
                 tileClassName={({ date }) => {
                   const d = date.toISOString().slice(0, 10);
                   return slotsByDate[d]

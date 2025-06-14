@@ -51,6 +51,7 @@ const AppointmentsPage = () => {
             return appt;
           })
         );
+        data = data.filter((appt) => appt.status !== "BLOCKED");
       }
 
       setAppointments(data);

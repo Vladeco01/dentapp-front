@@ -64,3 +64,20 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5em;
+}
+
+.react-calendar__navigation button {
+  font-size: 1.2em;
+  background: none;
+}
+
+.react-calendar__navigation__label__labelText {
+  font-weight: bold;
+  font-size: 1.2em;
+}
