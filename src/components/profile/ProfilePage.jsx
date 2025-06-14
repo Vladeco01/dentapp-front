@@ -311,9 +311,18 @@ const ProfilePage = () => {
                 next2Label="»"
                 tileClassName={({ date }) => {
                   const d = date.toISOString().slice(0, 10);
-                  return slotsByDate[d]
-                    ? styles.availableDay
-                    : styles.unavailableDay;
+                  const classes = [
+                    slotsByDate[d]
+                      ? styles.availableDay
+                      : styles.unavailableDay,
+                  ];
+                  if (
+                    selectedDate &&
+                    date.toDateString() === selectedDate.toDateString()
+                  ) {
+                    classes.push(styles.selectedDay);
+                  }
+                  return classes.join(" ");
                 }}
                 tileDisabled={({ date }) => {
                   const d = date.toISOString().slice(0, 10);
